@@ -23,6 +23,12 @@ class Themes {
   static const Color white = Color(0xFFFFFFFF);
 
   // TextStyles
+  static const bold18White = TextStyle(
+    fontSize: 18,
+    color: Colors.white,
+    fontWeight: FontWeight.w600,
+  );
+
   static const bold22White = TextStyle(
     fontSize: 22,
     color: Colors.white,

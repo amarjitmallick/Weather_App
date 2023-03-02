@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:weather_app/app/modules/home/data/home_store.dart';
+import 'package:weather_app/app/modules/home/ui/forecast_page.dart';
 import 'package:weather_app/app/utils/theme.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
@@ -15,11 +16,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _homeStore = Modular.get<HomeStore>();
+  TextEditingController searchController = TextEditingController();
 
   _getLocationData() async {
     try {
       Position position = await _homeStore.determinePosition();
       _homeStore.fetchCurrentWeatherData(position.latitude.toString(), position.longitude.toString());
+      _homeStore.fetchWeatherForecastData(position.latitude.toString(), position.longitude.toString());
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -29,6 +32,12 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _getLocationData();
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -83,10 +92,17 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 10),
-                                    child: Text(
-                                      _homeStore.weather!.main!.temp!.toString(),
-                                      style: Themes.bold36White,
-                                    ),
+                                    child: Observer(builder: (context) {
+                                      return _homeStore.showTempInCelsius
+                                          ? Text(
+                                              '${double.parse(_homeStore.weather!.main!.temp!.toString()).toInt()} °C',
+                                              style: Themes.bold36White,
+                                            )
+                                          : Text(
+                                              '${double.parse(((_homeStore.weather!.main!.temp! * 1.8) + 32).toString()).toInt()} °F',
+                                              style: Themes.bold36White,
+                                            );
+                                    }),
                                   ),
                                 ],
                               ),
@@ -98,12 +114,19 @@ class _HomePageState extends State<HomePage> {
                                 _homeStore.weather!.name!,
                                 style: Themes.bold22White,
                               ),
+                              Observer(builder: (context) {
+                                return _homeStore.showTempInCelsius
+                                    ? Text(
+                                        'Feels like ${double.parse(_homeStore.weather!.main!.feelsLike!.toString()).toInt()} °C',
+                                        style: Themes.bold22White,
+                                      )
+                                    : Text(
+                                        'Feels like ${double.parse(((_homeStore.weather!.main!.feelsLike! * 1.8) + 32).toString()).toInt()} °F',
+                                        style: Themes.bold22White,
+                                      );
+                              }),
                               Text(
-                                'Feels like ${_homeStore.weather!.main!.feelsLike!.toString()}',
-                                style: Themes.bold22White,
-                              ),
-                              Text(
-                                'Sunset at ${DateFormat('hh:mm').format(
+                                'Sunset at ${DateFormat('h:mm a').format(
                                   DateTime.fromMillisecondsSinceEpoch(
                                     _homeStore.weather!.sys!.sunset! * 1000,
                                   ),
@@ -114,6 +137,80 @@ class _HomePageState extends State<HomePage> {
                           )
                         : const Text('No Data Available');
               },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 25),
+            child: TextField(
+              controller: searchController,
+              decoration: InputDecoration(
+                hintText: 'Search location',
+                border: const OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  borderSide: BorderSide(
+                    color: Themes.dailyBlue,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                  borderSide: BorderSide(
+                    color: Themes.gray.withOpacity(0.4),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              debugPrint(searchController.text);
+              _homeStore.fetchCurrentWeatherDataByCity(searchController.text);
+              _homeStore.fetchWeatherForecastDataByCity(searchController.text);
+            },
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+              backgroundColor: Themes.dailyBlue,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8)),
+              ),
+            ),
+            child: const Text(
+              'Get Weather Data',
+              style: Themes.bold18White,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                const Text('Show temperature in Celsius'),
+                Switch(
+                  value: _homeStore.showTempInCelsius,
+                  onChanged: (val) {
+                    setState(() {
+                      _homeStore.showTempInCelsius = val;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                return const ForecastDetailsPage();
+              }));
+            },
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+              backgroundColor: Themes.dailyBlue,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8)),
+              ),
+            ),
+            child: const Text(
+              'Show Weather Forecast Data',
+              style: Themes.bold18White,
             ),
           ),
         ],
