@@ -17,7 +17,7 @@ class _AppWidgetState extends State<AppWidget> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      theme: ThemeData(primarySwatch: Colors.green, fontFamily: 'Poppins'),
+      theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Poppins'),
       routerDelegate: Modular.routerDelegate,
       routeInformationParser: Modular.routeInformationParser,
     );

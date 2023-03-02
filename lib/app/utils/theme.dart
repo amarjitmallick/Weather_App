@@ -21,4 +21,22 @@ class Themes {
   static const Color darkYellow = Color(0xFFDFCB55);
 
   static const Color white = Color(0xFFFFFFFF);
+
+  // TextStyles
+  static const bold22White = TextStyle(
+    fontSize: 22,
+    color: Colors.white,
+    fontWeight: FontWeight.w600,
+  );
+
+  static const normal22White = TextStyle(
+    fontSize: 22,
+    color: Colors.white,
+  );
+
+  static const bold36White = TextStyle(
+    fontSize: 36,
+    color: Colors.white,
+    fontWeight: FontWeight.w600,
+  );
 }
