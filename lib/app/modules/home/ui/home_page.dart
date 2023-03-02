@@ -43,6 +43,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _homeStore.scaffoldKey,
       backgroundColor: Themes.white,
       appBar: AppBar(
         elevation: 0,
@@ -86,10 +87,8 @@ class _HomePageState extends State<HomePage> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Icon(
-                                    Icons.sunny,
-                                    color: Themes.white,
-                                  ),
+                                  Image.network(
+                                      'http://openweathermap.org/img/wn/${_homeStore.weather!.weather![0].icon!}@2x.png'),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 10),
                                     child: Observer(builder: (context) {

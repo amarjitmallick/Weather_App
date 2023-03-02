@@ -57,10 +57,8 @@ class _ForecastDetailsPageState extends State<ForecastDetailsPage> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Icon(
-                                    Icons.sunny,
-                                    color: Themes.white,
-                                  ),
+                                  Image.network(
+                                      'http://openweathermap.org/img/wn/${_homeStore.weatherForecast!.weatherDataList![index].weather![0].icon!}@2x.png'),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 10),
                                     child: Observer(builder: (context) {
@@ -88,16 +86,16 @@ class _ForecastDetailsPageState extends State<ForecastDetailsPage> {
                               Observer(builder: (context) {
                                 return _homeStore.showTempInCelsius
                                     ? Text(
-                                        'Feels like ${double.parse(_homeStore.weatherForecast!.weatherDataList![index].main!.feelsLike!.toString()).toInt()} °C',
+                                        'Feel like ${double.parse(_homeStore.weatherForecast!.weatherDataList![index].main!.feelsLike!.toString()).toInt()} °C',
                                         style: Themes.bold22White,
                                       )
                                     : Text(
-                                        'Feels like ${double.parse(((_homeStore.weatherForecast!.weatherDataList![index].main!.feelsLike! * 1.8) + 32).toString()).toInt()} °F',
+                                        'Feel like ${double.parse(((_homeStore.weatherForecast!.weatherDataList![index].main!.feelsLike! * 1.8) + 32).toString()).toInt()} °F',
                                         style: Themes.bold22White,
                                       );
                               }),
                               Text(
-                                'Sunset at ${DateFormat('hh:mm').format(
+                                'Sunset at ${DateFormat('h:mm a').format(
                                   DateTime.fromMillisecondsSinceEpoch(
                                     _homeStore.weatherForecast!.city!.sunset! * 1000,
                                   ),

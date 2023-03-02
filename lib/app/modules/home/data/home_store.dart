@@ -57,12 +57,6 @@ abstract class _HomeStore with Store {
     if (response.statusCode == 200) {
       debugPrint(response.data.toString());
       weather = WeatherModel.fromJson(response.data);
-    } else {
-      scaffoldKey.currentState!.showSnackBar(
-        SnackBar(
-          content: Text(response.data['message']),
-        ),
-      );
     }
     fetchingData = false;
   }
@@ -70,16 +64,10 @@ abstract class _HomeStore with Store {
   @action
   Future<void> fetchCurrentWeatherDataByCity(String name) async {
     fetchingData = true;
-    Response response = await NetworkService.getCurrentWeatherDataByCity(name);
-    if (response.statusCode == 200) {
+    Response? response = await NetworkService.getCurrentWeatherDataByCity(name);
+    if (response != null && response.statusCode == 200) {
       debugPrint(response.data.toString());
       weather = WeatherModel.fromJson(response.data);
-    } else {
-      scaffoldKey.currentState!.showSnackBar(
-        SnackBar(
-          content: Text(response.data['message']),
-        ),
-      );
     }
     fetchingData = false;
   }
@@ -91,12 +79,6 @@ abstract class _HomeStore with Store {
     if (response.statusCode == 200) {
       debugPrint(response.data.toString());
       weatherForecast = WeatherForecastModel.fromJson(response.data);
-    } else {
-      scaffoldKey.currentState!.showSnackBar(
-        SnackBar(
-          content: Text(response.data['message']),
-        ),
-      );
     }
     fetchingData = false;
   }
@@ -104,16 +86,10 @@ abstract class _HomeStore with Store {
   @action
   Future<void> fetchWeatherForecastDataByCity(String name) async {
     fetchingData = true;
-    Response response = await NetworkService.getWeatherForecastDataByCity(name);
-    if (response.statusCode == 200) {
+    Response? response = await NetworkService.getWeatherForecastDataByCity(name);
+    if (response != null && response.statusCode == 200) {
       debugPrint(response.data.toString());
       weatherForecast = WeatherForecastModel.fromJson(response.data);
-    } else {
-      scaffoldKey.currentState!.showSnackBar(
-        SnackBar(
-          content: Text(response.data['message']),
-        ),
-      );
     }
     fetchingData = false;
   }
